@@ -1,0 +1,57 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Grab all matching sections by ID
+  const sections = document.querySelectorAll('#animate-scale, #animate-scale-fast, #animate-scale-slow');
+  if (!sections.length) return;
+
+  const sectionsData = [];
+
+  // Set up each section
+  sections.forEach((section) => {
+    let initialScale = 0.5;
+
+    if (section.id === 'animate-scale-fast') {
+      initialScale = 0.2;
+    } else if (section.id === 'animate-scale-slow') {
+      initialScale = 0.8;
+    }
+
+    const images = section.querySelectorAll('img');
+
+    images.forEach((img) => {
+      img.style.transform = `scale(${initialScale})`;
+      img.style.transition = 'transform 0.4s ease-out';
+      img.style.willChange = 'transform';
+    });
+
+    sectionsData.push({
+      section,
+      images,
+      initialScale
+    });
+  });
+
+  const scaleImages = () => {
+    const scrollY = window.scrollY + window.innerHeight;
+
+    sectionsData.forEach(({ section, images, initialScale }) => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+
+      const scrollProgress = Math.min(
+        Math.max((scrollY - sectionTop) / sectionHeight, 0),
+        1
+      );
+
+      const scaleValue = initialScale + (1 - initialScale) * scrollProgress;
+
+      images.forEach((img) => {
+        img.style.transform = `scale(${scaleValue})`;
+      });
+    });
+  };
+
+  window.addEventListener('scroll', scaleImages);
+  window.addEventListener('resize', scaleImages);
+});
+</script>
